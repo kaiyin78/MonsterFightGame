@@ -1,0 +1,153 @@
+<template id="updateweapon">
+    <div>
+        <h1>Update Weapon</h1>
+
+        <form class="form" @submit.prevent="submit">
+            <!-- TODO: Copy over -->
+            <label>Weapon Name</label>
+            <input v-model.trim="weaponName"
+                   required
+                   maxlength="50"
+                   v-focus>
+
+                   <label>Weapon Damage</label>
+                   <input type="number" min="0" max="99" required v-model.trim="weaponDamage"> 
+
+                   <label>Weapon Drop</label>
+                   <select name="radiovalue" @change="onChange($event)" required  v-model.trim="friendId">
+                       <option>--- Select Drop At Where ---</option>
+                       <option value="boss">Boss</option>
+                       <option value="monster">Monster</option>
+                    </select>
+
+            <!-- TODO: Copy over -->
+            <label>Weapon Photo</label>
+            <input type="file"
+                   accept="image/*"
+                   @change="change"
+                   ref="file">
+
+            
+            <!-- TODO: Copy over -->
+            <label></label>
+            <img :src="weaponPhoto || temp" class="photo">
+
+            <section>
+                <button>Update</button>
+                <button @click.prevent="reset">Reset</button>
+                <button @click.prevent="$router.push('/displayweapon')">Cancel</button>
+            </section>
+        </form>
+    </div>
+</template>
+
+<script>
+    Vue.component('updateweapon', {
+        template: '#updateweapon',
+        data: () => ({ 
+            id   : '',
+            weaponName : '',
+            weaponPhoto: '',
+            weaponDamage:'',
+            temp : '',
+            friendId:'',
+            testarray:[],
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                // TODO: Load record
+                let id = this.$route.params.id;
+                let f  = this.$root.weapon.find(f => f.id == id);
+
+                if (f == null) {
+                    alert('No Id Record Found');
+                    this.$router.push('/displayweapon');
+                    return;
+                }
+
+                this.id    = f.id;
+                this.weaponName  = f.weaponName;
+                this.temp  = f.weaponPhoto;
+                this.weaponDamage= f.weaponDamage;
+                this.friendId=f.friendId;
+            },
+            change(e) {
+                // TODO: Copy over
+                let f = e.target.files[0];
+
+                crop(f, 200, 200, 'dataURL', 'image/webp')
+                    .then(dataURL => this.weaponPhoto = dataURL)
+                    .catch(err    => this.weaponPhoto = e.target.value = '');
+            },
+            onChange(event) {
+              this.radiovalue = event.target.value;
+              console.log(radiovalue);
+          },
+            submit() { 
+                if(this.radiovalue=='boss'){
+                    console.log("Bossmou"+this.radiovalue);
+                    let data = {
+                    weaponName : this.weaponName,
+                    weaponDamage:this.weaponDamage,
+                    friendId:this.radiovalue,
+                };
+
+                if (this.weaponPhoto) {
+                    data.weaponPhoto = this.weaponPhoto;
+                }
+
+                ref1.doc(this.id).update(data);
+                ref1.doc(this.id).update({
+                    testarray:firebase.firestore.FieldValue.arrayUnion(this.weaponName)
+                });
+                 
+                    this.$router.push('/displayweapon');
+
+                }else if(this.radiovalue=='monster')
+                {
+                    let data = {
+                    weaponName : this.weaponName,
+                    weaponDamage:this.weaponDamage,
+                    friendId:this.radiovalue,
+                };
+
+                if (this.weaponPhoto) {
+                    data.weaponPhoto = this.weaponPhoto;
+                }
+
+                ref1.doc(this.id).update(data);
+                ref1.doc(this.id).update({
+                    testarray:firebase.firestore.FieldValue.arrayUnion(this.weaponName)
+                });
+              
+                    this.$router.push('/displayweapon');
+                }
+                else{
+             alert("Please Select One of the Weapon Drop");
+                }
+            
+
+
+
+               
+               
+            },
+            reset() {
+                this.load();
+                this.photo = '';
+                this.$refs.file.value = '';
+                this.$refs.name.focus();
+            },
+            
+        },
+        created() {
+            document.title = 'Fire Friends : Update Weapon';
+        }
+    });
+</script>

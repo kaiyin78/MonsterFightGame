@@ -1,0 +1,97 @@
+<template id="displayweapon">
+    <div>
+        <h1>Display Weapon</h1>
+
+        <p>
+            <button @click="checkAll">Check All</button>
+            <button @click="uncheckAll">Uncheck All</button>
+            <button @click="removeChecked" :disabled="checked.length == 0">
+                Remove Checked ({{ checked.length }})
+            </button>
+        </p>
+
+        <p>
+            {{ $root.weapon.length }} Weapon(s)
+        </p>
+
+        <!-- TODO: Remove id and photo column, add checkboxes -->
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Weapon Name</th>
+                <th>Weapon Damage</th>
+                <th></th>
+            </tr>
+            <tr v-for="f of $root.weapon">
+                <td>
+                    <input type="checkbox" v-model="checked" :value="f.id">
+                </td>
+                <td>{{ f.weaponName }}</td>
+                <td>{{ f.weaponDamage }}</td>
+                <td style="position: relative">
+                    <button  @click="$router.push('/updateweapon/' + f.id)">Update</button>
+                    <button @click="remove(f.id)">Remove</button>
+                    <img :src="f.weaponPhoto">
+                </td>
+            </tr>
+        </table>
+    </div>
+</template>
+
+<script>
+    Vue.component('displayweapon', {
+        template: '#displayweapon',
+        data: () => ({
+            // TODO: Checkbox status array
+            checked: [],
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                let id = this.$root.id;
+
+                let f = this.$root.friends.find(f => f.id == id);
+
+                if (f == null) {
+                    this.$router.push('/home');
+                    return;
+                }
+                else if (f != null) {
+                    console.log(id);
+
+
+                    this.display = f.name;
+
+                    console.log(display);
+                }
+            },
+            remove(id) {
+                // TODO: Delete a record
+                ref1.doc(id).delete();
+            },
+            checkAll() {
+                // TODO: Check all checkboxes
+                this.checked = this.$root.weapon.map(f => f.id);
+            },
+            uncheckAll() {
+                // TODO: Uncheck all checkboxes
+                this.checked = [];
+            },
+            removeChecked() {
+                // TODO: Remove checked records
+                this.checked.forEach(id => ref1.doc(id).delete());
+                this.checked = [];
+            },
+         
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Display Weapon';
+        }
+    });
+</script>

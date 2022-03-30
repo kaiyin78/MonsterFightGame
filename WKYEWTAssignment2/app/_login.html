@@ -1,0 +1,143 @@
+<template id="login">
+    <div>
+        <h1>Login</h1>
+
+        <form class="form" @submit.prevent="submit">
+            <!-- TODO: 
+                - input = name
+                - trim
+                - required
+                - maxlength = 50
+                - change event = auto-upper
+                - auto-focus
+                - reference
+            -->
+        
+
+            <label>Username</label>
+            <input v-model.trim="name"
+            required
+            maxlength="50"
+            v-focus
+            ref="name">
+
+            <!-- 
+                TODO:
+                - input = phone
+                - trim
+                - required
+                - maxlength = 12
+                - pattern = 01X-XXXXXXXX
+                - title
+                - input event = call validatePhone() method       
+            -->
+            <label>Password</label>
+            <input  v-model.trim="password"    
+            required type="password">
+
+
+            <span v-if="error.length">
+               
+               {{ error }}
+          
+            </span>
+         
+               
+ 
+           <!--
+                TODO:
+                - type = file
+                - accept = image only
+                - required
+                - change event = call change() method
+                - reference
+            -->
+            
+            <!-- TODO: Update image source as image selected -->
+            <section>
+                <button>Login</button>
+                <button @click.prevent="$router.push('/insert')">Register</button>
+            </section>
+
+          
+        </form>
+    </div>
+</template>
+
+<script>
+    Vue.component('login', {
+        template: '#login',
+        data: () => ({  
+            id:'',
+            name : '',
+            password:'',
+            type:'',
+            firsttime:'',
+            error:[],
+            displayname:'',
+        }),
+        methods: {   
+                
+          async submit(){
+                this.error=[];
+let n = this.name;
+let p = this.password;  
+let f = this.$root.friends.find(f => f.name == n && f.password == p);
+let q= this.$root.friends.find(f => f.firsttime==0);
+let t = n =='wong';
+let id =null;
+let testing= null;
+let snap = await ref.where('name', '==', n).get();
+if(snap.size >0)
+{
+    console.log(snap);
+    id=snap.docs[0].id;
+    testing=snap.docs[0].password;
+    console.log(testing);
+}
+
+
+if(f){
+if(t)
+{
+    this.$root.id=id;
+    this.$root.displayname=n;
+    alert('Successful Login As Admin!');
+    this.$router.push('/adminhome');
+}
+else if(!t){
+    // if(q){
+    // this.$root.id=id;
+    // this.$root.displayname=n;
+    // window.localStorage.setItem("id",JSON.stringify(id));
+    // alert('Successful Login!');
+
+    //         this.$router.push('/takeweapon');
+    //     }
+    //     else{
+    //         this.$root.id=id;
+    //         this.$root.displayname=n;
+    //         window.localStorage.setItem("id",JSON.stringify(id));
+    // alert('Successful Login!');
+    //         this.$router.push('/userhome');
+    //     }
+        this.$root.id=id;
+            this.$root.displayname=n;
+        window.localStorage.setItem("id",JSON.stringify(id));
+        window.localStorage.setItem("displayname",JSON.stringify(n));
+        alert('Successful Login!');
+            this.$router.push('/userhome');
+}
+
+}
+else{
+    alert('Username or Password Incorrect!');
+} 
+            },
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Login Account ';
+        }
+    });
+</script>

@@ -1,0 +1,105 @@
+<style>
+
+
+    .center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+
+}
+.homebutton, .homebutton::after {
+    cursor: pointer;
+  width: 380px;
+  height: 86px;
+  font-size: 36px;
+
+  background: linear-gradient(45deg, transparent 5%, #f96d6d 5%);
+  border: 0;
+  color: #5b305a;
+  letter-spacing: 3px;
+  line-height: 88px;
+  box-shadow: 6px 0px 0px #00E6F6;
+  outline: transparent;
+  position: relative;
+}
+
+.homebutton::after {
+  --slice-0: inset(50% 50% 50% 50%);
+  --slice-1: inset(80% -6px 0 0);
+  --slice-2: inset(50% -6px 30% 0);
+  --slice-3: inset(10% -6px 85% 0);
+  --slice-4: inset(40% -6px 43% 0);
+  --slice-5: inset(80% -6px 5% 0);
+  
+  content: 'AVAILABLE NOW';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%);
+  text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6;
+  clip-path: var(--slice-0);
+}
+
+
+</style>
+
+<template id="home">
+    
+    <div class="body">
+  <h2 style="text-align: center; color: #5b305a;   font-size: 36px;">Welcome To Monster Fight</h2>
+  <div  class="center">
+  <button class="homebutton" @click.prevent="gotoRegister">PLAY NOW</button>
+</div>
+    </div>
+</template>
+
+<script>
+    Vue.component('home', {
+        template: '#home',
+        data: () => ({
+            // TODO: Checkbox status array
+            checked:[]
+        }),
+        methods: {
+            restore() {
+                // TODO(1): Delete all
+                this.$root.friends.forEach(f =>ref.doc(f.id).delete());
+
+              
+
+                // TODO(2): Insert all from JSON file
+                fetch('data.json')
+                .then(resp => resp.json())
+                .then(json => json.forEach(data => ref.doc().set(data) ))   ;
+            },
+            remove(id) {
+                // TODO: Delete a record
+                ref.doc(id).delete();
+            },
+            checkAll() {
+                // TODO: Check all checkboxes
+                this.checked = this.$root.friends.map(f => f.id);
+            },
+            uncheckAll() {
+                // TODO: Uncheck all checkboxes
+                this.checked=[];
+            },
+            removeChecked() {
+                // TODO: Remove checked records
+                this.checked.forEach(id => ref.doc(id).delete());
+                this.checked=[];
+            },
+            gotoRegister(){
+                this.$router.push('/insert');
+            }
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Home';
+        }
+    });
+</script>

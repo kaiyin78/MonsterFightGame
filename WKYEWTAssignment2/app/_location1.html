@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="image/monster.png">
+  <link rel="stylesheet" href="css/app.css">
+  <title>Monster Fight</title>
+  <style>
+    main {
+      display: grid;
+    }
+
+    #map {
+      border: 1px solid #333;
+    }
+
+    #panel {
+      background-color: #fff;
+      border: 1px solid #999;
+      border-radius: 5px;
+      margin: 5px;
+      padding: 5px;
+      font-size: 16px;
+    }
+
+    #panel img {
+      width: 24px;
+    }
+
+    #panel * {
+      vertical-align: middle;
+    }
+
+    .bg-modal {
+      background-color: rgba(0, 0, 0, 0.8);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-contents {
+      height: 90%;
+      width: 90%;
+      background-color: white;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      border-radius: 4px;
+    }
+
+    .bg-modal2 {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      display: none;
+      justify-content: left;
+      align-items: left;
+    }
+
+    .modal-contents2 {
+      height: 90%;
+      width: 90%;
+      background-color: white;
+      text-align: left;
+      margin: 25px 0 0 -15px;
+      position: relative;
+      border-radius: 4px;
+    }
+
+    @import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+    @import url('https://fonts.googleapis.com/css?family=PT+Sans+Narrow');
+
+
+
+    .title {
+      position: relative;
+      margin-top: 10px;
+      color: white;
+      text-align: center;
+      font-size: 28px;
+      text-transform: uppercase;
+      font-family: "Roboto Condensed";
+    }
+
+    .battle-scene {
+      position: relative;
+      margin: auto;
+      display: block;
+      margin: 3px 0 0 350px;
+      width: 600px;
+      height: 420px;
+      background: #F8F8F8;
+      z-index: 1;
+    }
+
+    .box-top-left {
+      position: absolute;
+      width: 40%;
+      height: 15%;
+      border-radius: 10px;
+      top: 8%;
+      left: 8%;
+      background: #F8F8D8;
+      border: 6px solid #506860;
+    }
+
+    .hp-bar-top {
+      position: absolute;
+      bottom: 16%;
+      height: 20%;
+      width: 70%;
+      left: 10%;
+      border-radius: 20px;
+      background: grey;
+      opacity: 0.5;
+    }
+
+    .hp-bar-bottom {
+      position: absolute;
+      bottom: 32%;
+      height: 20%;
+      width: 70%;
+      left: 10%;
+      border-radius: 20px;
+      background: grey;
+      opacity: 0.5;
+    }
+
+    .hp-bar-fill {
+      position: absolute;
+      height: 100%;
+      border-radius: 20px;
+      background: #FF8800;
+    }
+
+    .box-top-right {
+      position: absolute;
+      width: 40%;
+      height: 25%;
+      border-radius: 50%;
+      top: 25%;
+      right: 8%;
+      background: #E0E0E0;
+    }
+
+    .pokemon-top {
+      height: 150%;
+      width: 50%;
+      position: absolute;
+      top: -80%;
+      left: 25%;
+    }
+
+    .pokemon-bottom {
+      height: 150%;
+      width: 50%;
+      position: absolute;
+      top: -75%;
+      left: 25%;
+    }
+
+
+    .box-bottom-left {
+      position: absolute;
+      width: 40%;
+      height: 25%;
+      border-radius: 50%;
+      bottom: 15%;
+      left: 8%;
+      background: #E0E0E0;
+    }
+
+    .box-bottom-right {
+      position: absolute;
+      width: 38%;
+      height: 20%;
+      border-radius: 10px;
+      bottom: 20%;
+      right: 8%;
+      background: #F8F8D8;
+      border: 6px solid #506860;
+      z-index: 2;
+    }
+
+    .pokemon {
+      text-align: left;
+      margin-left: 10%;
+      margin-top: 5%;
+      opacity: 0.7;
+      font-size: 18px;
+      font-family: "Roboto Condensed";
+    }
+
+    .level {
+      position: absolute;
+      right: 8%;
+      top: -11%;
+      opacity: 0.7;
+      font-size: 16px;
+      font-family: "Roboto Condensed";
+    }
+
+    .hp {
+      position: absolute;
+      right: 8%;
+      bottom: -20%;
+      opacity: 0.7;
+      font-size: 16px;
+      font-family: "Roboto Condensed";
+    }
+
+    .bottom-menu {
+      position: absolute;
+      width: 98%;
+      bottom: 0%;
+      height: 19%;
+      background: #285068;
+      z-index: 1;
+      border: solid 6px #CEB46D;
+    }
+
+    .text-box-left {
+      position: absolute;
+      width: 50%;
+      left: 0%;
+      height: 95%;
+
+    }
+
+    .text-box-right {
+      position: absolute;
+      width: 40%;
+      top: -6%;
+      right: -1%;
+      height: 98%;
+      background: #F8F8F8;
+      border: solid 6px #6F677F;
+
+    }
+
+    .battle-text {
+      margin-top: 3%;
+      margin-left: 5%;
+      opacity: 0.95;
+      font-size: 18px;
+      color: white;
+      text-align: left;
+      font-family: "PT Sans Narrow";
+    }
+
+    .battle-text-top-left {
+      opacity: 0.95;
+      position: absolute;
+      font-size: 22px;
+      color: #333333;
+      top: -30%;
+      left: 10%;
+      text-align: left;
+      font-family: "PT Sans Narrow";
+      cursor: pointer;
+    }
+
+    .battle-text-bottom-left {
+      opacity: 0.95;
+      position: absolute;
+      font-size: 22px;
+      color: #333333;
+      bottom: -30%;
+      left: 10%;
+      text-align: left;
+      font-family: "PT Sans Narrow";
+      cursor: pointer;
+    }
+
+    .battle-text-top-right {
+      opacity: 0.95;
+      position: absolute;
+      font-size: 22px;
+      color: #333333;
+      top: -30%;
+      right: 21%;
+      text-align: left;
+      font-family: "PT Sans Narrow";
+      cursor: pointer;
+    }
+
+    .battle-text-bottom-right {
+      opacity: 0.95;
+      position: absolute;
+      font-size: 22px;
+      color: #333333;
+      bottom: -30%;
+      right: 20%;
+      text-align: left;
+      font-family: "PT Sans Narrow";
+      cursor: pointer;
+    }
+
+    @media all and (max-width: 600px) {
+      .battle-scene {
+        position: relative;
+        margin: auto;
+        display: block;
+        margin-top: 3%;
+        width: 400px;
+        height: 280px;
+        background: #F8F8F8;
+        z-index: 1;
+      }
+
+      .title {
+        position: absolute;
+        top: -33%;
+        left: 7.5%;
+        color: white;
+        text-align: center;
+        font-size: 22px;
+        text-transform: uppercase;
+        font-family: "Roboto Condensed";
+      }
+
+      .pokemon {
+        text-align: left;
+        margin-left: 11%;
+        margin-top: 5%;
+        opacity: 0.7;
+        font-size: 10px;
+        font-family: 'Times New Roman', Times, serif;
+      }
+
+
+      .level {
+        position: absolute;
+        right: 5%;
+        top: -13%;
+        opacity: 0.7;
+        font-size: 10px;
+        font-family: "Roboto Condensed";
+      }
+
+      .hp {
+        position: absolute;
+        right: 8%;
+        bottom: -20%;
+        opacity: 0.7;
+        font-size: 11px;
+        font-family: "Roboto Condensed";
+      }
+
+
+      .battle-text-top-left {
+        opacity: 0.95;
+        position: absolute;
+        font-size: 14px;
+        color: #333333;
+        top: -30%;
+        left: 10%;
+        text-align: left;
+        font-family: "PT Sans Narrow";
+        cursor: pointer;
+      }
+
+      .battle-text-bottom-left {
+        opacity: 0.95;
+        position: absolute;
+        font-size: 14px;
+        color: #333333;
+        bottom: -30%;
+        left: 10%;
+        text-align: left;
+        font-family: "PT Sans Narrow";
+        cursor: pointer;
+      }
+
+      .battle-text-top-right {
+        opacity: 0.95;
+        position: absolute;
+        font-size: 14px;
+        color: #333333;
+        top: -30%;
+        right: 21%;
+        text-align: left;
+        font-family: "PT Sans Narrow";
+        cursor: pointer;
+      }
+
+      .battle-text-bottom-right {
+        opacity: 0.95;
+        position: absolute;
+        font-size: 14px;
+        color: #333333;
+        bottom: -30%;
+        right: 20%;
+        text-align: left;
+        font-family: "PT Sans Narrow";
+        cursor: pointer;
+      }
+
+      .battle-text {
+        margin-top: 1%;
+        margin-left: 5%;
+        opacity: 0.95;
+        font-size: 10px;
+        color: white;
+        text-align: left;
+        font-family: "PT Sans Narrow";
+      }
+
+
+
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1><a href="index.html">Monster Fight</a></h1>
+  </header>
+
+  <nav>
+    <a href="map.html" style="background-color: #8b4f80;">Map</a>
+    <a href="index.html" style="position:absolute; right:0;">Logout</a>
+  </nav>
+
+  <!-- Vue ----------------------------------------------------------------->
+  <main id="app" v-cloak>
+    <div id="map"></div>
+
+    <div hidden>
+      <div id="panel">
+        <div>Player Name: {{name}}</div>
+        <div v-for="m of markers">
+          <img :src="m.icon.url">
+          <span v-if="m.found">Dead</span>
+          <span v-else>{{ m.distance | number(0) }} meters</span>
+        </div>
+      </div>
+    </div>
+
+    <div hidden v-if="isBossFound">
+      <form id="info" @submit.prevent="">
+        <div>
+          <p
+            style="font-size: medium; font-weight: bold; color: brown; font-family: 'Courier New', Courier, monospace;">
+            Monster Name: <input v-model.trim="BossName"
+              style="border: none; color: brown; font-weight: bold; font-size: medium; font-family: 'Courier New', Courier, monospace;"
+              disabled></p>
+        </div>
+        <label>
+        </label>
+        <div>
+          <button @click.prevent="openmodel">Fight</button>
+
+
+        </div>
+      </form>
+    </div>
+
+    <div hidden v-else>
+      <form id="info" @submit.prevent="">
+        <div>
+          <p style="font-size: medium; font-weight: bold; font-family: 'Courier New', Courier, monospace;">Monster Name:
+            Monster<input v-model.trim="storemarkerid"
+              style="border: none; color: black; font-weight: bold; font-size: medium; font-family: 'Courier New', Courier, monospace;"
+              disabled></p>
+        </div>
+        <label>
+
+        </label>
+        <div>
+          <button @click.prevent="openmodel">Fight</button>
+
+
+        </div>
+      </form>
+    </div>
+
+
+    <div class="bg-modal">
+      <div class="modal-contents">
+
+
+
+
+        <div id="app">
+
+          <!-- Begin battle scene -->
+          <div class="battle-scene">
+
+
+
+
+            <div class="box-top-left" v-if="isBossFound">
+
+              <h2 class="pokemon">Boss</h2>
+
+              <div class="hp-bar-top">
+                <div v-bind:style="opponentHpBar" class="hp-bar-fill"></div>
+                <h4 class="hp">{{opponentHP}}/{{startmonsterHP}}</h4>
+              </div>
+
+            </div>
+
+            <div class="box-top-left" v-else>
+
+              <h2 class="pokemon">Monster</h2>
+              <div class="hp-bar-top">
+                <div v-bind:style="opponentHpBar" class="hp-bar-fill"></div>
+                <h4 class="hp">{{opponentHP}}/{{startmonsterHP}}</h4>
+              </div>
+              <h4 class="level"><input class="level " v-model.trim="storemarkerid"
+                  style="border: none; color: black; text-align: center;text-indent: 15px; position: relative; top: -4px; font-size: 20px; font-family: 'Times New Roman', Times, serif; "
+                  disabled></h4>
+            </div>
+
+
+
+            <div class="box-top-right" v-if="isBossFound">
+              <img v-if="opponentAlive" :src="BossImage.url" class="pokemon-top" />
+            </div>
+
+            <div class="box-top-right" v-else>
+              <img v-if="opponentAlive" :src="monsterbattleimage.url" class="pokemon-top" />
+            </div>
+
+
+            <div class="box-bottom-left">
+              <img v-if="userAlive" v-bind:src="userPokemonSrc" class="pokemon-bottom" />
+            </div>
+
+
+
+
+            <div class="box-bottom-right">
+              <h2 class="pokemon">{{name}}</h2>
+              <div class="hp-bar-bottom">
+                <div v-bind:style="userHpBar" class="hp-bar-fill"></div>
+              </div>
+
+              <h4 class="hp">{{userHP}}/{{startUserHP}}</h4>
+            </div>
+
+
+            <div class="bottom-menu">
+              <div class="battle-text text-box-left">
+                {{battleText}}
+              </div>
+
+
+              <div class="text-box-right">
+                <div v-if="optionsOn" id="battleOptions">
+                  <h4 v-on:click="processOption(1)" class="battle-text-top-left">{{battleOptions[0]}}</h4>
+                  <h4 v-on:click="processOption(2)" class="battle-text-top-right">{{battleOptions[1]}}</h4>
+                  <h4 v-on:click="processOption(3)" class="battle-text-bottom-left">{{battleOptions[2]}}</h4>
+
+                </div>
+
+
+
+              </div>
+
+
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+        <div class="bg-modal2">
+          <div class="modal-contents2">
+            <div>Weapon List</div>
+            <table class="table">
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Damage</th>
+                <th></th>
+              </tr>
+              <tr v-for="displayAlldata of pushData">
+                <td> <input type="radio" v-model="checkedvalue" :value="displayAlldata.weaponName"></td>
+                <td>{{ displayAlldata.weaponName }}</td>
+                <td>{{ displayAlldata.weaponDamage }}</td>
+                <td style="position: relative">
+                  <button @click.prevent="changedamage">Equip</button>
+                  <img :src="displayAlldata.weaponPhoto">
+                </td>
+              </tr>
+            </table>
+
+
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-firestore.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=geometry"></script>
+  <script src="js/jquery.slim.js"></script>
+  <script src="js/vue.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/vue-router.js"></script>
+  <script src="js/vuefire.js"></script>
+
+  <script>
+
+    firebase.initializeApp({
+      projectId: 'kaiyin-demo'
+    });
+
+    const ref = firebase.firestore().collection('friends');
+    const ref1 = firebase.firestore().collection('weapon');
+
+    // let displayname = JSON.parse(window.localStorage.getItem('displayname'));
+    Vue.use(Vuefire.firestorePlugin);
+    // TODO(6): Audio files
+    const audio1 = new Audio('audio/1.mp3');
+    const audio2 = new Audio('audio/2.mp3');
+    const audio3 = new Audio('audio/marvel.mp3');
+    const audio4 = new Audio('audio/Bossong.mp3');
+
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        friends: [],
+        markers: [],
+        displayAlldata: [],
+        pushData: [],
+        name: '',
+        enemyname: '',
+        checkedvalue: '',
+        win: false,
+        step: 0,
+        image: '',
+        id: '',
+        testid: '',
+        testing123: '',
+        takeweaponatbattle: '',
+        storevalue: '',
+        weaponDamage1: '',
+        weaponName: '',
+        weaponPhoto: '',
+        userweaponDamage: '',
+        weaponUpdateEquip: '',
+        weaponPushEquip: '',
+        weaponUpdateDamage: '',
+        storemarkerid: '',
+        BossName: '',
+        monsterbattleimage: '',
+        BossImage: '',
+        isBossFound: '',
+        displayname: '',
+        userPokemonSrc: "image/player.gif",
+        userAlive: true,
+        opponentAlive: true,
+        opponentFill: 100,
+        userFill: 100,
+        userHP: 100,
+        startUserHP: 100,
+        monsterHP: 100,
+        startmonsterHP: 100,
+        opponentHP: 100,
+        battleText: '',
+        battleOptions: ["Attack", "Weapon", "Run"],
+        opponentAttackDamage: [15, 20, 40, 25],
+
+
+
+
+        BossAttackDamage: [20, 30, 50, 35],
+        getUpdateWeaponName: '',
+        fightOn: false,
+        optionsOn: true,
+        endOn: false,
+        userHpBar: {
+          width: "100%"
+        },
+        opponentHpBar: {
+          width: "100%"
+        },
+      },
+
+      methods: {
+        processOption: function (option) {
+          switch (option) {
+            case 1:
+
+              this.optionsOn = false
+              this.fightOn = true
+              this.opponentHP -= this.userweaponDamage;
+              this.opponentFill -= this.userweaponDamage;
+              if (this.opponentFill <= 0) {
+                this.opponentHpBar.width = "0%"
+              } else {
+                this.opponentHpBar.width = this.opponentFill + "%"
+              }
+              if (this.checkOpponentHp()) {
+
+                if (vm.isBossFound == true) {
+                  this.battleText = "Enemy Boss Dead! Congratulation!"
+                  this.dropBossWeapon();
+                  let boostest = vm.markers.find(m => m.BossName == vm.BossName);
+                  boostest.setMap(null);
+                  boostest.found = true;
+                  alert(this.battleText);
+
+                  this.closemodel();
+                }
+                else if (vm.isBossFound == false) {
+                  this.battleText = "Enemy Monster Dead! Congratulation!";
+                  this.dropWeapon();
+                  let f1 = vm.markers.find(m => m.storemarkerid == vm.storemarkerid);
+                  f1.setMap(null);
+                  f1.found = true;
+                  alert(this.battleText);
+                  this.closemodel();
+                }
+
+
+              } else if (this.checkOpponentHp() === false) {
+
+                setTimeout(() => {
+                  this.processOpponentAttack()
+                }, 2000);
+
+                this.battleText = this.name + " did " + this.userweaponDamage + " damage!";
+
+                setTimeout(() => {
+                  if (this.userAlive) {
+                    setTimeout(() => {
+                      this.battleText = "What will " + this.name + " do?"
+                    }, 2000);
+                  }
+                }, 2000);
+              }
+              break;
+            case 2:
+              this.changeweapon();
+              break;
+            case 3:
+              this.battleText = "You're escaped.";
+              this.closemodel();
+              alert('You Escaped!');
+              break;
+
+
+          }
+
+        },
+
+        checkOpponentHp: function () {
+          if (this.opponentHP <= 0) {
+            return true
+
+          } else {
+            return false
+          }
+        },
+        processOpponentAttack: function () {
+
+          if (vm.isBossFound == true) {
+            var random = Math.floor((Math.random() * 4) + 1);
+            this.userHP -= this.BossAttackDamage[random - 1];
+            this.userFill -= (this.BossAttackDamage[random - 1]);
+            if (this.userFill <= 0) {
+              this.userHpBar.width = "0%";
+            } else {
+              this.userHpBar.width = this.userFill + "%";
+            }
+            if (this.checkUserHp()) {
+              this.battleText = "You Lose, Try Harder Next Time! ";
+              alert(this.battleText);
+              this.closemodel();
+            } else if (this.checkOpponentHp() === false) {
+              this.battleText = "Enemy Boss " + " did " + this.BossAttackDamage[random - 1] + " damage!";
+              this.fightOn = false;
+              this.optionsOn = true;
+            }
+
+          }
+          else if (vm.isBossFound == false) {
+            var random = Math.floor((Math.random() * 4) + 1);
+            this.userHP -= this.opponentAttackDamage[random - 1];
+            this.userFill -= (this.opponentAttackDamage[random - 1]);
+            if (this.userFill <= 0) {
+              this.userHpBar.width = "0%";
+            } else {
+              this.userHpBar.width = this.userFill + "%";
+            }
+            if (this.checkUserHp()) {
+              this.battleText = "You Lose, Try Harder Next Time! ";
+              alert(this.battleText);
+              this.closemodel();
+            } else if (this.checkOpponentHp() === false) {
+              this.battleText = "Enemy Monster " + " did " + this.opponentAttackDamage[random - 1] + " damage!";
+              this.fightOn = false;
+              this.optionsOn = true;
+            }
+
+          }
+        },
+        checkUserHp: function () {
+          if (this.userHP <= 0) {
+            //fainted
+            return true
+
+          } else {
+            //battle continues
+            return false
+          }
+        },
+        move(x, y) {
+          // TODO(4): Pan the map (move the player)
+          //          Prevent moving out of bounds
+          let c1 = map.getCenter();
+          map.panBy(x * 10, y * 10);
+          let c2 = map.getCenter();
+
+          if (bounds.contains(c2)) {
+            player.setPosition(c2);
+          }
+          else {
+            map.setCenter(c1);
+          }
+
+          for (let m of vm.markers.filter(m => !m.found)) {
+            let a = player.getPosition();
+            let b = m.getPosition();
+            m.distance = gm.geometry.spherical.computeDistanceBetween(a, b);
+
+            if (m.isBossFound == true) {
+              if (m.distance < 500) {
+                audio4.play();
+              }
+              else if (m.distance > 500) {
+                audio4.pause();
+              }
+            }
+
+          }
+
+
+          if (vm.markers.every(m => m.found)) {
+            vm.win = true;
+            setTimeout(() => {
+              audio2.play();
+              alert(`You killed all the monster !!!`);
+              window.location = "map.html";
+            }, 1000);
+          }
+        },
+        openmodel() {
+          if (vm.isBossFound == false) {
+            audio3.play();
+          }
+          document.querySelector('.bg-modal').style.display = "flex";
+        },
+        closemodel() {
+          audio3.pause();
+          audio3.currentTime = 0;
+
+          if (vm.isBossFound == true) {
+            audio4.pause();
+            audio4.currentTime = 0;
+          }
+          this.endOn = false;
+          this.fightOn = false;
+          this.optionsOn = true;
+          this.battleText = "What will " + this.name + " do?";
+          this.userAlive = true
+          this.opponentAlive = true
+          this.userHP = 100
+          this.opponentHP = 100
+          this.userFill = 100
+          this.opponentFill = 100
+          this.userHpBar.width = "100%"
+          this.opponentHpBar.width = "100%"
+          document.querySelector('.bg-modal').style.display = "none";
+        },
+        gotoUserhome() {
+          let id = JSON.parse(window.localStorage.getItem('id'));
+          window.localStorage.setItem("id", JSON.stringify(id));
+
+          alert('Successful Go To User Home page');
+          window.location = "index.html#/userhome";
+        },
+        async dropBossWeapon() {
+          let id = JSON.parse(window.localStorage.getItem('id'));
+          let snap5 = await ref1.where('friendId', '==', 'boss').get();
+
+          let queryRef = await ref1.get();
+          console.log(queryRef.size);
+
+          let random = Math.floor(Math.random() * (queryRef.size - 0 + 1)) + 0;
+          console.log(random);
+
+          let testsnap66 = snap5.docs[0].data().weaponName;
+          console.log(testsnap66);
+
+          ref.doc(id).update({
+            ArrayweaponName: firebase.firestore.FieldValue.arrayUnion(testsnap66)
+          });
+          alert("Congratulations You Get Boss Item " + testsnap66 + " Go Check Your Weapon Bag");
+
+        },
+        async dropWeapon() {
+          let id = JSON.parse(window.localStorage.getItem('id'));
+          let m = vm.markers[1].storemarkerid;
+          // console.log(m);
+          let snap4 = await ref1.where('friendId', '==', 'monster').get();
+          let queryRef = await ref1.get();
+          console.log(queryRef.size);
+
+          let random = Math.floor(Math.random() * (queryRef.size - 1 + 1)) + 1;
+          // console.log(random);
+
+
+          let testsnap66 = snap4.docs[random].data().weaponName;
+          console.log(testsnap66);
+
+          ref.doc(id).update({
+            ArrayweaponName: firebase.firestore.FieldValue.arrayUnion(testsnap66)
+          });
+          alert("Congratulations You get " + testsnap66 + " Go Check Your Weapon Bag");
+
+        },
+        changeweapon() {
+          document.querySelector('.bg-modal2').style.display = "flex";
+        },
+        changedamage() {
+          let id = JSON.parse(window.localStorage.getItem('id'));
+          let seevalue = this.checkedvalue;
+          console.log(seevalue);
+          ref.doc(id).update({
+            weaponequip: seevalue
+          });
+          alert("Successfully Equipped " + seevalue + " Please Reload the page!");
+
+          this.closechangeweapon();
+
+        },
+        closechangeweapon() {
+          document.querySelector('.bg-modal2').style.display = "none";
+
+        },
+      },
+      mounted() {
+        // TODO(3): Handle keydown event, call vm.move(x, y) accordingly
+        //          e.key or e.code = AwLeft, ArrowRight, ArrowUp, ArrowDown
+        $(document).keydown(e => {
+          if (vm.win) return;
+
+          vm.step++;
+
+          switch (e.key) {
+            case 'ArrowLeft': vm.move(-1, 0); break;
+            case 'ArrowRight': vm.move(+1, 0); break;
+            case 'ArrowUp': vm.move(0, -1); break;
+            case 'ArrowDown': vm.move(0, +1); break;
+          }
+        });
+
+
+
+      },
+      computed: {
+        showMonstername1() {
+          let ff1 = vm.markers.find(m => m.storemarkerid == vm.markers[0].storemarkerid);
+          if (ff1) {
+            return true;
+          }
+          else {
+            return false;
+          }
+
+        },
+        showMonstername2() {
+          let ff2 = vm.markers.find(m => m.storemarkerid == vm.markers[1].storemarkerid);
+          if (ff2) {
+            return true;
+          }
+          else {
+            return false;
+          }
+
+        },
+      },
+      async created() {
+        this.processOption();
+
+
+
+        let id = JSON.parse(window.localStorage.getItem('id'));
+
+        let testid = null;
+        let testid6 = null;
+        let testid123 = null;
+        let testid1234 = null;
+
+        let snap = await ref.doc(id).get();
+        this.name = snap.data().name;
+        // this.displayname=this.name;
+        this.weaponDamage1 = snap.data().weaponequip;
+        console.log(this.weaponDamage1);
+        this.weaponName = snap.data().ArrayweaponName;
+
+        let gg = this.weaponName;
+        // console.log(n);
+        let takeweaponatbattle = await ref1.where('testarray', 'array-contains-any', gg).get();
+        for (let doc of takeweaponatbattle.docs) {
+          // console.log(doc.id); 
+          // console.log(doc.data());
+          displayAlldata = doc.data();
+          console.log(displayAlldata);
+          this.pushData.push(displayAlldata);
+        }
+
+
+
+        this.weaponDamage2 = snap.data().ArrayweaponName;
+        let nn = this.weaponDamage2;
+        console.log(nn);
+        let snap3 = await ref1.where('testarray', 'array-contains-any', nn).get();
+
+        for (let doc of snap3.docs) {
+          testid1234 = doc.id;
+          testid123 = doc.data();
+          testid6 = doc.data().weaponName;
+          console.log(testid6);
+          console.log(testid123);
+        }
+
+
+        this.battleText = "What will " + this.name + " do?";
+        let n = this.weaponDamage1;
+        let testing123 = await ref1.where('weaponName', '==', n).get();
+        // console.log(testing123.size);
+
+        if (testing123.size > 0) {
+
+          testid = testing123.docs[0].id;
+
+        }
+
+        let snap2 = await ref1.doc(testid).get();
+        this.userweaponDamage = snap2.data().weaponDamage
+        let testmou = this.userweaponDamage
+        // console.log(testmou);
+
+      }
+    });
+
+    // Google Maps --------------------------------------------------------
+    const gm = google.maps;
+
+    let center = new gm.LatLng(0, 0);
+
+    if (window.location.search == "?mapid=AncientForestMap") {
+      center = new gm.LatLng(26.589771, 42.469972);
+    }
+    else if (window.location.search == "?mapid=GreatRavine") {
+      center = new gm.LatLng(12.108385, 15.053644);
+    }
+    else if (window.location.search == "?mapid=CoralHighlands") {
+      center = new gm.LatLng(29.913465, 73.872641);
+
+    }
+    else if (window.location.search == "?mapid=WildspireWaste") {
+      center = new gm.LatLng(34.316697, 108.723079);
+    }
+    else if (window.location.search == "?mapid=ElderRecess") {
+      center = new gm.LatLng(-18.809556, 16.930279);
+    }
+    else if (window.location.search == "?mapid=RottenVale") {
+      center = new gm.LatLng(-23.704012, 133.870874);
+    }
+    else if (window.location.search == "?mapid=Astera") {
+      center = new gm.LatLng(51.219566, 18.569361);
+    }
+    else {
+      center = new gm.LatLng(3.215000, 101.730000);
+    }
+
+
+    const map = new gm.Map($('#map')[0], {
+      keyboardShortcuts: false, // EXTRA: Disable keyboard shortcuts
+      center,
+      zoom: 18,
+      disableDefaultUI: true,
+      clickableIcons: false,
+      // TODO(8): Disable gesture handling (zoom, pan, etc)
+      gestureHandling: 'none'
+    });
+
+    const panel = $('#panel')[0];
+    map.controls[gm.ControlPosition.TOP_LEFT].push(panel);
+
+    const player = new gm.Marker({
+      position: center,
+      map,
+      icon: 'image/player.gif',
+      animation: gm.Animation.DROP
+    });
+
+    // TODO(1): Calculate bounds & draw rectangle
+
+    // NOTE: Position used must be LatLng object
+    const sw = gm.geometry.spherical.computeOffset(center, 2000, 225);
+    const ne = gm.geometry.spherical.computeOffset(center, 2000, 45);
+    const bounds = new gm.LatLngBounds(sw, ne);
+    const rect = new gm.Rectangle({
+      map,
+      bounds,
+      strokeColor: 'none',
+      strokeWeight: 0,
+      fillOpacity: 0
+
+    });
+
+
+    const info = new gm.InfoWindow({
+      content: $('#info')[0]
+    });
+
+
+
+    gm.event.addListenerOnce(map, 'bounds_changed', e => {
+
+      let images = [];
+      if (window.location.search == "?mapid=AncientForestMap") {
+        images = ['Monster9', 'Monster3', 'Monster10', 'Monster13', 'Monster2', 'Monster4'];
+      }
+      else if (window.location.search == "?mapid=GreatRavine") {
+        images = ['Monster3', 'Monster1', 'Monster7', 'Monster5', 'Monster8', 'Monster13'];
+      }
+      else if (window.location.search == "?mapid=CoralHighlands") {
+        images = ['Monster2', 'Monster7', 'Monster1', 'Monster5', 'Monster6', 'Monster9'];
+      }
+      else if (window.location.search == "?mapid=WildspireWaste") {
+        images = ['Monster4', 'Monster3', 'Monster5', 'Monster8', 'Monster1', 'Monster2'];
+      }
+      else if (window.location.search == "?mapid=ElderRecess") {
+        images = ['Monster7', 'Monster4', 'Monster8', 'Monster2', 'Monster9', 'Monster13'];
+      }
+      else if (window.location.search == "?mapid=RottenVale") {
+        images = ['Monster7', 'Monster8', 'Monster9', 'Monster10', 'Monster13', 'Monster11'];
+      }
+      else if (window.location.search == "?mapid=Astera") {
+        images = ['Monster1', 'Monster2', 'Monster3', 'Monster4', 'Monster5', 'Monster7'];
+      }
+      else {
+        images = ['Monster10', 'Monster11', 'Monster1', 'Monster13', 'Monster5', 'Monster6'];
+      }
+      var random = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+      let bossimages = [];
+      console.log(random);
+      if (random == 5) {
+        bossimages = ['BossTan'];
+        alert('Boss Are Here!');
+      }
+
+
+      // TODO(2): Drop markers (hearts) on map within the bounds (random position)
+      let sp = bounds.toSpan();
+      for (let img of images) {
+        let p = {
+          lat: sw.lat() + sp.lat() * Math.random(),
+          lng: sw.lng() + sp.lng() * Math.random()
+        };
+        addMarker(p, img);
+      }
+      for (let bossimg of bossimages) {
+        let p = {
+          lat: sw.lat() + sp.lat() * Math.random(),
+          lng: sw.lng() + sp.lng() * Math.random()
+        };
+        addBossMarker(p, bossimg);
+      }
+
+      vm.move(0, 0);
+    });
+    let storemarker = 0;
+    function addMarker(position, image) {
+      let monsterimage = {
+        url: `image/h/${image}.gif`, // url
+        scaledSize: new google.maps.Size(200, 200), // scaled size
+        origin: new google.maps.Point(0, 0), // origin
+        anchor: new google.maps.Point(0, 0) // anchor
+      };
+      let m = new gm.Marker({
+        map,
+        position,
+        icon: monsterimage,
+        distance: 0, // Custom property
+        found: false,
+        storemarkerid: ++storemarker,
+        isBossFound: false,// Custom property
+      });
+      console.log(m.storemarkerid);
+      vm.markers.push(m);
+
+      m.addListener('click', e => {
+        vm.storemarkerid = m.storemarkerid;
+        vm.monsterbattleimage = m.icon;
+        vm.isBossFound = m.isBossFound;
+        info.open(
+          map, m,
+
+
+        );
+      });
+    }
+    let BossNamedisplay = 'Boss';
+    function addBossMarker(position, image) {
+      let bossimage = {
+        url: `image/h/${image}.jpg`,
+        scaledSize: new google.maps.Size(300, 300),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(0, 0)
+      };
+      let m = new gm.Marker({
+        map,
+        position,
+        icon: bossimage,
+        distance: 0,
+        found: false,
+        BossName: BossNamedisplay,
+        isBossFound: true,
+      });
+
+      vm.markers.push(m);
+
+      m.addListener('click', e => {
+        vm.BossName = m.BossName;
+        vm.BossImage = m.icon;
+        vm.isBossFound = m.isBossFound;
+        // TODO(13): Open info window --> fill id, lable and image
+        info.open(map, m);
+      });
+    }
+
+  </script>
+</body>
+
+</html>

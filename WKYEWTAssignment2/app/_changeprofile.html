@@ -1,0 +1,107 @@
+<template id="changeprofile">
+    <div>
+        <h1>Change Profile</h1>
+
+        <form class="form" @submit.prevent="submit">
+            <!-- TODO: Copy over -->
+            <label>Name</label>
+            <input v-model.trim="name"
+            required
+            maxlength="50"
+            v-focus
+            ref="name">
+
+            <!-- TODO: Copy over -->
+            <label>Email</label>
+            <input v-model.trim="email"
+            required
+            type="email"
+            @input="validateEmail">
+
+
+            <section>
+                <button>Change</button>
+                <button @click.prevent="reset">Reset</button>
+                <button @click.prevent="$router.push('/userhome')">Cancel</button>
+            </section>
+        </form>
+    </div>
+    
+</template>
+
+<script>
+    Vue.component('changeprofile', {
+        template: '#changeprofile',
+        data: () => ({ 
+            id   : '',
+            name : '',
+            email: '',
+            temp : ''
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                // TODO: Load record
+                let id = this.$root.id;
+                let f= this.$root.friends.find(f => f.id ==id);
+
+                if(f == null){
+                    this.$router.push('/home');
+                    return;
+                }
+
+                this.id = f.id;
+                this.name = f.name;
+                this.email =f.email;
+
+            },
+            validateName(e) {
+                // TODO: Detect duplicated phone
+                let el= e.target;
+                let name = el.value;
+
+                el.setCustomValidity('');
+                if(el.validity.valid){
+                    let f = this.$root.friends.find(f => f.name == name);
+                    if(f){
+                        el.setCustomValidity('Duplicated Username. Please Enter Another Username');
+                    }
+                }
+            },
+            validateEmail(){
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+        this.msg['email'] = 'Please enter a valid email address';
+    } else {
+        this.msg['email'] = '';
+    }
+            },
+            submit() { 
+                // TODO: Update record
+                let data = {
+                    name: this.name,
+                    email: this.email
+                };
+
+                ref.doc(this.id).update(data);
+                alert('Successful Update Profile!');
+                this.$router.push('/userhome');
+
+            },
+            reset() {
+                // TODO: Reset form
+                this.load();
+                this.$refs.file.value='';
+                this.$refs.name.focus();
+            }
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Change Profile';
+        }
+    });
+</script>

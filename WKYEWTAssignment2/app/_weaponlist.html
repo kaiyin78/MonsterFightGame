@@ -1,0 +1,224 @@
+<style>
+    #list .flex {
+        /* TODO */
+        display: flex;
+     
+    }
+
+    #list .image {
+        /* TODO */
+        border: 1px solid #333;
+        display: block;
+        width: 200px;
+        position: relative;
+    }
+
+    #list .image img {
+        /* TODO */
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+    }
+    
+    #list .image button {
+        /* TODO */
+       position: absolute;
+       top: 1px;
+       right: 1px;
+    }
+
+    #list .image div {
+        /* TODO */
+        position: absolute;
+        bottom: 0;
+        background: #fffc;
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .middle {
+  transition: .5s ease;
+  opacity: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+ 
+ 
+}
+
+.image:hover .image {
+  opacity: 0.3;
+}
+
+.image:hover .middle {
+  opacity: 1;
+}
+.text {
+    position: absolute;
+  color: black;
+  width: 100%;
+        padding: 5px;
+  font-size: 16px;
+ 
+}
+</style>
+
+<template id="weaponlist">
+    <div>
+        <h1>Weapon Bag</h1>
+
+ 
+        <!-- TODO: Remove id and photo column, add checkboxes
+        <table class="table">
+            <tr>
+             
+                <th>Weapon Name</th>
+                <th>Weapon Damage?</th>
+                <th></th>
+            </tr>
+            <tr v-for="displayAlldata of pushData">
+                <td>
+                    <input type="radio" v-model="checked" :value="displayAlldata.id">
+                </td>
+  
+                <td>{{ displayAlldata.weaponName }}</td>
+                <td>{{ displayAlldata.weaponDamage }}</td>
+             
+                <td style="position: relative">
+                    <button >Update</button>
+                    <button>Remove</button>
+          
+                </td>
+            </tr>
+        </table> -->
+
+        <div id="list">
+    
+            <p>{{ pushData.length }} weapon(s)</p>
+            <p style="color: brown;">Currently You're Equiping {{this.equipweaponName}}</p>
+    <div>
+            <transition-group name="zoom" tag="div" class="flex">
+                <div class="image" v-for="displayAlldata of pushData" :key="weaponName">
+                    
+                    <input type="radio" v-model="checkedvalue" :value="displayAlldata.weaponName" >
+                    <img :src="displayAlldata.weaponPhoto">
+                    <button @click.prevent="checkvalue" style="cursor: pointer;" aria-placeholder="Equip">Equip</button>
+                    <div>{{ displayAlldata.weaponName }}</div>
+                    <div class="middle">
+                        <div class="text">Weapon Damage: {{ displayAlldata.weaponDamage }}</div>
+                    </div>
+                </div>
+            </transition-group>
+        </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    Vue.component('weaponlist', {
+        template: '#weaponlist',
+        data: () => ({
+            // TODO: Checkbox status array
+            checked: [],
+            weaponName:'',
+           weaponDamage:'',
+           weaponPhoto:'',
+           displayAlldata:[],
+           pushData:[],
+           checkedvalue:'',
+           equipweaponName:'',
+           checkedvaluefirebase:'',
+           id:'',
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                let id = this.$root.id;
+
+                let f = this.$root.friends.find(f => f.id == id);
+
+                if (f == null) {
+                    this.$router.push('/home');
+                    return;
+                }
+                else if (f != null) {
+                    console.log(id);
+
+
+                    this.display = f.name;
+
+                    console.log(display);
+                }
+            },
+            checkAll() {
+                // TODO: Check all checkboxes
+                this.checked = this.$root.weapon.map(f => f.id);
+            },
+            uncheckAll() {
+                // TODO: Uncheck all checkboxes
+                this.checked = [];
+            },
+            removeChecked() {
+                // TODO: Remove checked records
+                this.checked.forEach(id => ref1.doc(id).delete());
+                this.checked = [];
+            },
+         checkvalue(){
+            let id = JSON.parse(window.localStorage.getItem('id'));
+             let seevalue= this.checkedvalue;
+            console.log(seevalue);
+                ref.doc(id).update({
+                    weaponequip: seevalue
+                });
+             alert("Successfully Equipped " + seevalue);
+
+         },
+        },
+       
+        // Life-cycle methods
+        async created() {
+
+        let id = JSON.parse(window.localStorage.getItem('id'));
+        // console.log(id);
+
+        let testid = null;
+        let testid2 = null;
+        let testid3 = null;
+        let testid4 = null;
+        let testid5 = null;
+        let testid6 = null;
+
+
+        let snap = await ref.doc(id).get();
+        this.weaponName = snap.data().ArrayweaponName;
+        this.equipweaponName = snap.data().weaponequip;
+  
+        let n = this.weaponName;
+        // console.log(n);
+        let testing123 = await ref1.where('testarray', 'array-contains-any', n).get();
+
+
+        for (let doc of testing123.docs) { 
+    // console.log(doc.id); 
+    // console.log(doc.data());
+   testid1234=doc.id;
+   testid123=doc.data();
+   displayAlldata=doc.data();
+
+   console.log(displayAlldata);
+   this.pushData.push(displayAlldata);
+}
+
+
+
+      }
+    });
+</script>

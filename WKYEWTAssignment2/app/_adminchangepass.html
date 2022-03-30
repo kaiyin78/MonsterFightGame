@@ -1,0 +1,146 @@
+<template id="adminchangepass">
+    <div>
+        <h1>Reset Password</h1>
+
+        <form class="form" @submit.prevent="submit">
+            <!-- TODO: Copy over -->
+            <label>Current Password</label>
+            <input v-model.trim="temppassword"
+            required
+            type="password"
+            v-focus
+            @input="checkCurrentPassword"
+     >
+
+            <!-- TODO: Copy over -->
+            <label>New Password</label>
+            <input v-model.trim="password" @input="checkpasswordhint" title="Please Follow the Password Hints"
+            required
+            type="password"
+           >
+
+            <!-- TODO: Copy over -->
+            <label>Confirm New Password</label>
+            <input type="password" v-model.trim="confirmpassword" required
+            @input ="checksamepasswordornot"
+            >
+
+            <div  style="border: 5px solid;  background-color:transparent; ">
+                <h2>Password Hints</h2>
+          <transition name="hint" appear>
+              <div v-if='passwordValidation.errors.length > 0' class='hints'>
+               
+                  <p v-for='error in passwordValidation.errors'>{{error}}</p>
+              </div>
+          </transition>
+        </div>
+    
+
+            <section>
+                <button>Update</button>
+                <button @click.prevent="reset">Reset</button>
+                <button @click.prevent="$router.push('/adminhome')">Cancel</button>
+            </section>
+        </form>
+    </div>
+</template>
+
+<script>
+    Vue.component('adminchangepass', {
+        template: '#adminchangepass',
+        data: () => ({ 
+            id   : '',
+            name : '',
+            password: '',
+            confirmpassword:'',
+            temppassword:'',
+            rules:[	{ message:'One lowercase letter required.', regex:/[a-z]+/ },
+				{ message:"One uppercase letter required.",  regex:/[A-Z]+/ },
+				{ message:"8 characters minimum.", regex:/.{8,}/ },
+				{ message:"One number required.", regex:/[0-9]+/ }
+            ],
+            testerror:false,
+        }),
+        methods: {
+            checkCurrentPassword(e){
+                // TODO: Copy over
+                let el= e.target;
+                let temppassword = el.value;
+
+                el.setCustomValidity('');
+                if(el.validity.valid){
+                    let f = this.$root.friends.find(f => f.password === temppassword);
+                    if(!f){
+                        el.setCustomValidity('Password Not Match. Please Enter Again.');
+                    }
+                   
+                }
+            },
+            submit() { 
+                let id = this.$root.id;
+                let f= this.$root.friends.find(f => f.id ==id);
+
+                this.id=f.id;
+                // TODO: Update record
+                let data = {
+                    password:this.password,
+                };
+
+                ref.doc(this.id).update(data);
+                alert('Successful Change Password!');
+                this.$router.push('/adminhome');
+
+            },
+            checksamepasswordornot(e)
+            {
+                let el=e.target;
+                el.setCustomValidity('');
+                if(this.passwordCheck){
+                   let f = this.password!== this.confirmpassword;
+                   if(f){
+                    el.setCustomValidity('Password Must Be Same.');
+                   }
+                }
+                else{
+                    return false
+                }
+            },
+            reset() {
+                // TODO: Reset form
+                this.temppassword='';
+                this.password= '';
+                this.confirmpassword='';
+            },
+            checkpasswordhint(e){
+                let el=e.target;
+                el.setCustomValidity('');
+                if(!this.passwordValidation.valid){
+                    el.setCustomValidity('Please Follow the Password Hints.');
+                }
+            },
+        },
+        computed:{
+            passwordCheck(){
+                return (this.password!== '' && this.confirmpassword!=='')
+            },
+            passwordValidation (){
+                let errors =[]
+                for (let condition of this.rules){
+                    if(!condition.regex.test(this.password)){
+                        errors.push(condition.message)
+                    }
+                }
+                if(errors.length===0){
+                    return {valid:true,errors}
+                }
+                else{
+                    return {valid:false,errors}
+                }
+            },
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Admin Reset Password';
+        }
+    });
+</script>

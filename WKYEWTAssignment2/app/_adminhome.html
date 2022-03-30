@@ -1,0 +1,120 @@
+<template id="adminhome">
+
+    <div>
+        <div class="yellow_bg">
+            <div class="container">
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="title">
+                              <h2>Admin Home</h2>                           
+                           </div>
+                        </div>
+                     </div>
+                   </div>
+         </div>
+
+
+        <p>
+            <button @click="checkAll">Check All</button>
+            <button @click="uncheckAll">Uncheck All</button>
+            <button @click="removeChecked" :disabled="checked.length== 0">Remove Checked
+                 ({{checked.length}})
+                </button>
+        </p>
+
+        <p>
+
+            {{ $root.friends.length }} friend(s)
+        </p>
+
+        <!-- TODO: Remove id and photo column, add checkboxes -->
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Email</th>
+
+                <th></th>
+            </tr>
+            <tr v-for="f of $root.friends">
+                <td>
+                    <input type="checkbox" v-model="checked" :value="f.id"> 
+                </td>
+                <td>{{ f.name }}</td>
+                <td>{{ f.email }}</td>
+
+                <td style="position: relative">
+                 
+                    <button @click="remove(f.id)">Remove</button>
+               
+                    <img :src="f.photo">
+                </td>
+            </tr>
+        </table>
+    </div>
+</template>
+
+<script>
+    Vue.component('adminhome', {
+        template: '#adminhome',
+        data: () => ({ 
+            id   : '',
+            name : '',
+            email: '',
+            temp : '',
+            checked:[]
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                // TODO: Load record
+                let id = this.$root.id;
+                let f= this.$root.friends.find(f => f.id ==id);
+                if(f == null){
+                    this.$router.push('/home');
+                    return;
+                }
+                // else if(f!=null){
+                //     console.log(f.name);
+                // }
+                this.id = f.id;
+                this.name = f.name;
+                this.email =f.email;
+            },
+            remove(id) {
+                // TODO: Delete a record
+                ref.doc(id).delete();
+            },
+            checkAll() {
+                // TODO: Check all checkboxes
+                this.checked = this.$root.friends.map(f => f.id);
+            },
+            uncheckAll() {
+                // TODO: Uncheck all checkboxes
+                this.checked=[];
+            },
+            removeChecked() {
+                // TODO: Remove checked records
+                this.checked.forEach(id => ref.doc(id).delete());
+                this.checked=[];
+            },
+            gotoAdminChangeProfile(){
+                let id = this.$root.id;
+    this.$root.id=id;
+    alert('Successful Go to Admin Change profile page');
+    this.$router.push('/adminchangepro');
+ 
+            },
+     
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Admin Home';
+        }
+    });
+</script>

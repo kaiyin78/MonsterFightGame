@@ -1,0 +1,202 @@
+<template id="insert">
+    <div>
+        <h1>Registration</h1>
+
+        <form class="form" @submit.prevent="submit">
+            <!-- TODO: 
+                - input = name
+                - trim
+                - required
+                - maxlength = 50
+                - change event = auto-upper
+                - auto-focus
+                - reference
+            -->
+
+            <label>Username</label>
+            <input v-model.trim="name"
+            required
+            maxlength="50"
+            @input="validateName"
+            v-focus
+            ref="name">
+
+
+            <label>Email Address</label>
+            <input for="email" type="email" required v-model="email" @input="validateEmail">
+            
+            <!-- 
+                TODO:
+                - input = phone
+                - trim
+                - required
+                - maxlength = 12
+                - pattern = 01X-XXXXXXXX
+                - title
+                - input event = call validatePhone() method       
+            -->
+            <label>Password</label>
+            <input @input="checkpasswordhint" v-model.trim="password"
+            :type="passwordFieldType"
+            required
+            >
+
+           <!--
+                TODO:
+                - type = file
+                - accept = image only
+                - required
+                - change event = call change() method
+                - reference
+            -->
+            <label>Confirm Password</label>
+            <input v-model.trim ="confirmpassword" type="password"
+            required
+            @input="checksamepasswordornot" 
+            >
+            
+            <!-- TODO: Update image source as image selected -->
+      
+            <div  style="border: 5px solid;  background-color:transparent; ">
+                <h2>Password Hints</h2>
+          <transition name="hint" appear>
+              <div v-if='passwordValidation.errors.length > 0' class='hints'>
+               
+                  <p v-for='error in passwordValidation.errors'>{{error}}</p>
+              </div>
+          </transition>
+        </div>
+
+
+            <section>
+                <button>Submit</button>
+                <button @click.prevent="reset">Reset</button>
+                <button @click.prevent="$router.push('/home')">Cancel</button>
+            </section>
+        </form>
+    </div>
+</template>
+
+<script>
+    Vue.component('insert', {
+        template: '#insert',
+        data: () => ({ 
+            name : '',
+            phone: '',
+            photo: '',
+            temp : 'image/photo.png',
+            rules:[	{ message:'One lowercase letter required.', regex:/[a-z]+/ },
+				{ message:"One uppercase letter required.",  regex:/[A-Z]+/ },
+				{ message:"8 characters minimum.", regex:/.{8,}/ },
+				{ message:"One number required.", regex:/[0-9]+/ }
+            ],
+            email:'',
+            password:'',
+            confirmpassword:'',
+            firsttime:'',
+            passwordFieldType:"password"
+        }),
+        methods: {
+            change(e) {
+                // TODO: Crop image --> load data URL as preview
+                let f= e.target.files[0];
+                crop(f, 200, 200, 'dataURL','image/webp')
+                .then(dataURL => this.photo =dataURL)
+                .catch(err => this.photo= e.target.value= '');
+            },
+            validateName(e) {
+                // TODO: Detect duplicated phone
+                let el= e.target;
+                let name = el.value;
+
+                el.setCustomValidity('');
+                if(el.validity.valid){
+                    let f = this.$root.friends.find(f => f.name == name);
+                    if(f){
+                        el.setCustomValidity('Duplicated Username. Please Enter Another Username');
+                    }
+                }
+            },
+            checksamepasswordornot(e)
+            {
+                let el=e.target;
+                el.setCustomValidity('');
+                if(this.passwordCheck){
+                   let f = this.password!== this.confirmpassword;
+                   if(f){
+                    el.setCustomValidity('Password Must Be Same.');
+                   }
+                }
+                else{
+                    return false
+                }
+            },
+            submit() { 
+                // TODO: Insert record
+                ref.doc().set({
+                    name: this.name,
+                    password:this.password,
+                    email:this.email,
+                    firsttime:0,
+                });
+                this.$router.push('/home');
+            },
+            reset() {
+                // TODO: Reset form
+                this.name='';
+                this.email='';
+                this.password='';
+                this.confirmpassword='';
+                this.phone= '';
+                this.photo='';
+                this.$refs.file.value='';
+                this.$refs.name.focus();
+            },
+            validateEmail(){
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+        this.msg['email'] = 'Please enter a valid email address';
+    } else {
+        this.msg['email'] = '';
+    }
+            },
+            checkpasswordhint(e){
+                let el=e.target;
+                el.setCustomValidity('');
+                if(!this.passwordValidation.valid){
+                    el.setCustomValidity('Please Follow the Password Hints.');
+                }
+            },
+        },
+        computed:{
+            checkSamePasswords(){
+                if(this.passwordCheck){
+                    return (this.password!== this.confirmpassword)
+                }
+                else{
+                    return false
+                }
+            },
+            passwordCheck(){
+                return (this.password!== '' && this.confirmpassword!=='')
+            },
+            passwordValidation (){
+                let errors =[]
+                for (let condition of this.rules){
+                    if(!condition.regex.test(this.password)){
+                        errors.push(condition.message)
+                    }
+                }
+                if(errors.length===0){
+                    return {valid:true,errors}
+                }
+                else{
+                    return {valid:false,errors}
+                }
+            },
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Insert Friend';
+        }
+    });
+</script>

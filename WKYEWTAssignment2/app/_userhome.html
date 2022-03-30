@@ -1,0 +1,83 @@
+
+
+<template id="userhome">
+    <div>
+        <h1>User Home</h1>
+        <h1>Player List</h1>
+
+        <table class="table">
+            <tr>
+              
+                <th>Player Name</th>
+                <th>Player's Email</th>
+
+            </tr>
+            <tr v-for="f of $root.friends">
+      
+                <td>{{ f.name }}</td>
+                <td>{{ f.email }}</td>
+
+           
+            </tr>
+        </table>
+    </div>
+</template>
+
+<script>
+    Vue.component('userhome', {
+        template: '#userhome',
+        data: () => ({ 
+            id   : '',
+            name : '',
+            email: '',
+            firsttime:'',
+            temp : ''
+        }),
+        // watch: {
+        //     $route: {
+        //         handler: 'load',
+        //         immediate: true
+        //     }
+        // },
+        methods: {
+            load() {
+                // TODO: Load record
+                let id = JSON.parse(window.localStorage.getItem('id'));
+               console.log(id);
+                let f= this.$root.friends.find(f => f.id ==id);
+
+                // console.log(this.$root.friends.name);
+                // if(f.firsttime==0){
+                  
+         
+
+                
+             if(f.firsttime==0)
+                    {
+                        this.$router.push('/takeweapon')
+                    }
+
+
+                // }
+            // }
+                this.id = f.id;
+                this.name = f.name;
+                this.email =f.email;
+                console.log(this.id);
+
+            },
+           async  gotoChangeProfile(){
+                let id = JSON.parse(window.localStorage.getItem('id'));
+                let snap = await ref.doc(id).get();
+        this.name = snap.data().name;
+ 
+            },
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : User Home';
+            this.load();
+            
+        }
+    });
+</script>

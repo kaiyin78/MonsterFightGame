@@ -1,0 +1,22 @@
+[
+  {
+    "name" : "KIM JENNIE",
+    "phone": "010-00000001",
+    "photo": "image/photo.png"
+  },
+  {
+    "name" : "KIM JISOO",
+    "phone": "010-00000002",
+    "photo": "image/photo.png"
+  },
+  {
+    "name" : "LALISA MANOBAN",
+    "phone": "010-00000003",
+    "photo": "image/photo.png"
+  },
+  {
+    "name" : "PARK ROSEANNE",
+    "phone": "010-00000004",
+    "photo": "image/photo.png"
+  }
+]

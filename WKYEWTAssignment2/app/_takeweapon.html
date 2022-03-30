@@ -1,0 +1,245 @@
+<style>
+    #list .flex {
+        /* TODO */
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #list .image {
+        /* TODO */
+        border: 1px solid #333;
+        display: block;
+        width: 200px;
+        position: relative;
+    }
+
+    #list .image img {
+        /* TODO */
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+    }
+
+    #list .image button {
+        /* TODO */
+        position: absolute;
+        top: 1px;
+        right: 1px;
+    }
+
+    #list .image div {
+        /* TODO */
+        position: absolute;
+        bottom: 0;
+        background: #fffc;
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .middle {
+  transition: .5s ease;
+  opacity: 0;
+  top: 50%;
+  left: 49%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.image:hover .image {
+  opacity: 0.3;
+}
+
+.image:hover .middle {
+  opacity: 1;
+}
+.text {
+    position: absolute;
+  color: black;
+  width: 100%;
+        padding: 5px;
+  font-size: 16px;
+ 
+}
+</style>
+<template id="takeweapon">
+    <div>
+
+
+        <form class="form" @submit.prevent="submit">
+
+
+            <div id="list">
+                <h1>Hey, {{display}} Choose Your Initial Weapon (3 Choose 1) To Explore Monster Hunter World!</h1>
+                <div class="image">
+                    <label>
+                        <input type="radio" name="weapon" @click="onChange($event)" value="Jagras" />
+                        <img src="image/h/weapon1.png">
+                        <div>Weapon Name: Jagras</div>
+                        <div class="middle">
+                            <div class="text">Weapon Damage: 25</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="image">
+                    <label>
+                        <input type="radio" name="weapon" @click="onChange($event)" value="Icicle" />
+                        <img src="image/h/weapon2.png">
+                        <div>Weapon Name: Icicle</div>
+                        <div class="middle">
+                            <div class="text">Weapon Damage: 25</div>
+                        </div>
+                    </label>
+                </div>
+                <div class="image">
+                    <label>
+                        <input type="radio" name="weapon" @click="onChange($event)" value="Severing" />
+                        <img src="image/h/weapon3.png">
+                        <div>Weapon Name: Severing</div>
+                        <div class="middle">
+                        <div class="text">Weapon Damage: 25</div>
+                    </div>
+                    </label>
+                </div>
+
+            </div>
+            <!-- <div class="container">
+                <img src="img_avatar.png" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text">John Doe</div>
+                </div>
+              </div> -->
+                
+
+
+
+
+            <section>
+
+                <button>Select</button>
+            </section>
+        </form>
+
+    </div>
+</template>
+
+<script>
+    Vue.component('takeweapon', {
+        template: '#takeweapon',
+        data: () => ({
+            id: '',
+            name: '',
+            email: '',
+            firsttime: '',
+            weaponequip:'',
+            temp: '',
+            display: '',
+            Jagras: '',
+            Icicle: '',
+            Severing: '',
+            ArrayweaponName: [],
+            optionText: null,
+        }),
+        watch: {
+            $route: {
+                handler: 'load',
+                immediate: true
+            }
+        },
+        methods: {
+            load() {
+                let id = this.$root.id;
+
+                let f = this.$root.friends.find(f => f.id == id);
+
+                if (f == null) {
+                    this.$router.push('/home');
+                    return;
+                }
+                else if (f != null) {
+                    console.log(id);
+
+
+                    this.display = f.name;
+
+                    console.log(display);
+                }
+            },
+            submit() {
+                let id = this.$root.id;
+                    this.$root.id = id;
+                if (this.optionText == 'Jagras') {
+                
+                    console.log(id);
+                    let data = {
+                        firsttime: 1,
+                        weaponequip:'Jagras',
+                    };
+                    ref.doc(id).update(data);
+
+                    ref.doc(id).update({
+                        ArrayweaponName: firebase.firestore.FieldValue.arrayUnion("Jagras")
+                    });
+                    this.$router.push('/weaponlist');
+                }
+                else if (this.optionText == 'Icicle') {
+           
+                    console.log('Icicle Selected');
+                    alert('Icicle Selected');
+                    let data = {
+                        firsttime: 1,
+                        weaponequip:'Icicle',
+                    };
+                    ref.doc(id).update(data);
+                    ref.doc(id).update({
+                        ArrayweaponName: firebase.firestore.FieldValue.arrayUnion("Icicle")
+                    });
+                    this.$router.push('/weaponlist');
+                }
+                else if (this.optionText == 'Severing') {
+       
+                    console.log('Severing Selected');
+                    alert('Severing Selected');
+                    let data = {
+                        firsttime: 1,
+                        weaponequip:'Severing',
+                    };
+                    ref.doc(id).update(data);
+                    ref.doc(id).update({
+                        ArrayweaponName: firebase.firestore.FieldValue.arrayUnion("Severing")
+                    });
+                    this.$router.push('/weaponlist');
+                }
+                else {
+     
+                    console.log('None Selected');
+                    alert('None Selected');
+                }
+                //  ref1.doc(this.id).update({
+                //                 testarray:firebase.firestore.FieldValue.arrayUnion("Weapon67")
+                //             });
+
+                // console.log(this.optionText);
+
+                // this.$router.push('/displayweapon');
+
+            },
+            onChange(event) {
+
+                this.optionText = event.target.value;
+
+                console.log(optionText);
+
+            },
+        },
+        // Life-cycle methods
+        created() {
+            document.title = 'Fire Friends : Take Weapon ';
+            this.onChange();
+        }
+    });
+</script>
